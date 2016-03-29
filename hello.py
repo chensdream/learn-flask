@@ -35,9 +35,11 @@ migrate = Migrate(app, db)
 manager.add_command('db',MigrateCommand)
 mail = Mail(app)
 
+
 class NameForm(Form):
     name = StringField('What is your name?', validators=[Required()])
     submit = SubmitField('submit')
+
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -47,6 +49,7 @@ class Role(db.Model):
 
     def __repr__(self):
         return '<Role %r>' % self.name
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -62,9 +65,11 @@ def make_shell_context():
     return dict(app=app,db=db,User=User,Role=Role)
 manager.add_command('shell', Shell(make_context=make_shell_context))
 
+
 def send_async_email(app, msg):
     with app.app_context():
         mail.send(msg)
+
 
 def send_email(to, subject, template, **kwargs):
     msg = Message(app.config['FLASKY_MAIL_SUBJECT_PRYFIX'] + subject,sender=app.config['FLASKY_MAIL_SENDER'], recipients=[to])
@@ -94,13 +99,16 @@ def index():
 
     return render_template('index.html',form = form, name = session.get('name'), known=session.get('konwn',False),current_time=datetime.utcnow())
 
+
 @app.route('/user/<name>')
 def user(name):
     return render_template('user.html', name=name, current_time=datetime.utcnow())
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
 
 @app.errorhandler(500)
 def internal_server_error(e):
